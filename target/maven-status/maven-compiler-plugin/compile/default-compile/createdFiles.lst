@@ -1,0 +1,9 @@
+sn\ucad\m1\sunubibliotek\Cyberboys\entities\Revue.class
+sn\ucad\m1\sunubibliotek\Cyberboys\entities\Livre.class
+sn\ucad\m1\sunubibliotek\Cyberboys\entities\Dictionnaire.class
+sn\ucad\m1\sunubibliotek\Cyberboys\dao\DocumentDAO.class
+sn\ucad\m1\sunubibliotek\Cyberboys\services\BibliothequeService.class
+sn\ucad\m1\sunubibliotek\Cyberboys\utils\JPAUtil.class
+sn\ucad\m1\sunubibliotek\Cyberboys\controllers\DocumentServlet.class
+sn\ucad\m1\sunubibliotek\Cyberboys\entities\Document.class
+sn\ucad\m1\sunubibliotek\Cyberboys\utils\AppContextListener.class
