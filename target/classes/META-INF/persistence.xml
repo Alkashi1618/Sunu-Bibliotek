@@ -8,10 +8,23 @@
     <persistence-unit name="bibliothequePU" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         
+        <!-- Entités Documents -->
         <class>sn.ucad.m1.sunubibliotek.Cyberboys.entities.Document</class>
         <class>sn.ucad.m1.sunubibliotek.Cyberboys.entities.Livre</class>
         <class>sn.ucad.m1.sunubibliotek.Cyberboys.entities.Revue</class>
         <class>sn.ucad.m1.sunubibliotek.Cyberboys.entities.Dictionnaire</class>
+        
+        <!-- Entité Utilisateur -->
+        <class>sn.ucad.m1.sunubibliotek.Cyberboys.entities.Utilisateur</class>
+        
+        <!-- Entité Emprunt -->
+        <class>sn.ucad.m1.sunubibliotek.Cyberboys.entities.Emprunt</class>
+        
+        <!-- Entité Reservation -->
+        <class>sn.ucad.m1.sunubibliotek.Cyberboys.entities.Reservation</class>
+        
+        <!-- Entité Categorie -->
+        <class>sn.ucad.m1.sunubibliotek.Cyberboys.entities.Categorie</class>
         
         <properties>
             <!-- Configuration de la base de données -->

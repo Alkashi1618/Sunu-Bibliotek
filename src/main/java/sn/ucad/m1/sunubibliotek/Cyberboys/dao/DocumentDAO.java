@@ -100,11 +100,60 @@ public class DocumentDAO {
         }
     }
 
+    public List<Document> findDocumentsDisponibles() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Document> query = em.createQuery(
+                "SELECT d FROM Document d WHERE d.quantiteDisponible > 0 ORDER BY d.titre", 
+                Document.class);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Document> findDocumentsIndisponibles() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Document> query = em.createQuery(
+                "SELECT d FROM Document d WHERE d.quantiteDisponible = 0 ORDER BY d.titre", 
+                Document.class);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public Document findByIsbn(String isbn) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Document> query = em.createQuery(
+                "SELECT d FROM Document d WHERE d.isbn = :isbn", 
+                Document.class);
+            query.setParameter("isbn", isbn);
+            List<Document> results = query.getResultList();
+            return results.isEmpty() ? null : results.get(0);
+        } finally {
+            em.close();
+        }
+    }
+
     public Long count() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Long> query = em.createQuery(
                 "SELECT COUNT(d) FROM Document d", Long.class);
+            return query.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public Long countDisponibles() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(d) FROM Document d WHERE d.quantiteDisponible > 0", Long.class);
             return query.getSingleResult();
         } finally {
             em.close();

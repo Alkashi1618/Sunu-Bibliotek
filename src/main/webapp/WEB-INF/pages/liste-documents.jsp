@@ -1,10 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="sn.ucad.m1.sunubibliotek.Cyberboys.entities.*" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Sunu Bibliotek - Liste des Documents</title>
+    <title>Documents - Sunu Bibliotek</title>
     <style>
         * {
             margin: 0;
@@ -13,80 +14,40 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f7fafc;
             min-height: 100vh;
-            padding: 20px;
         }
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 40px;
+        }
+        .page-header {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        h1 {
-            color: #333;
+        .page-header h1 {
+            color: #2d3748;
+            font-size: 2em;
             margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-        .subtitle {
-            color: #667eea;
-            font-weight: bold;
-            margin-bottom: 20px;
         }
         .stats {
-            color: #666;
-            margin-bottom: 30px;
+            color: #718096;
             font-size: 1.1em;
         }
-        .actions {
+        .actions-bar {
             display: flex;
             gap: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             flex-wrap: wrap;
         }
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        .btn-danger {
-            background: #f56565;
-            color: white;
-            padding: 8px 15px;
-            font-size: 0.9em;
-        }
-        .btn-danger:hover {
-            background: #e53e3e;
-        }
-        .btn-edit {
-            background: #48bb78;
-            color: white;
-            padding: 8px 15px;
-            font-size: 0.9em;
-        }
-        .btn-edit:hover {
-            background: #38a169;
-        }
         .search-box {
+            flex: 1;
             display: flex;
             gap: 10px;
-            margin-bottom: 30px;
         }
         .search-box input {
             flex: 1;
@@ -99,10 +60,56 @@
             outline: none;
             border-color: #667eea;
         }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        .btn-edit {
+            background: #48bb78;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+        .btn-edit:hover {
+            background: #38a169;
+        }
+        .btn-danger {
+            background: #f56565;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+        .btn-info {
+            background: #4299e1;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         th {
             background: #667eea;
@@ -137,47 +144,62 @@
             background: #c6f6d5;
             color: #22543d;
         }
+        .badge-disponible {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        .badge-indisponible {
+            background: #fed7d7;
+            color: #742a2a;
+        }
         .empty-state {
             text-align: center;
             padding: 60px 20px;
             color: #a0aec0;
-        }
-        .empty-state i {
-            font-size: 4em;
-            margin-bottom: 20px;
+            background: white;
+            border-radius: 12px;
         }
     </style>
 </head>
 <body>
+    <%
+        Utilisateur currentUser = (Utilisateur) session.getAttribute("utilisateur");
+    %>
+    
+    <!-- Include Menu -->
+    <jsp:include page="menu.jsp" />
+    
     <div class="container">
-        <h1>📚 Sunu Bibliotek</h1>
-        <div class="subtitle">Cyberboys Edition</div>
-        <div class="stats">
-            Total: <strong>${count}</strong> document(s)
+        <div class="page-header">
+            <h1>📚 Catalogue des Documents</h1>
+            <div class="stats">
+                Total: <strong><c:out value="${count}"/></strong> document(s)
+            </div>
         </div>
 
-        <div class="actions">
-            <a href="${pageContext.request.contextPath}/documents?action=add" class="btn btn-primary">
-                ➕ Ajouter un document
-            </a>
+        <div class="actions-bar">
+            <form action="${pageContext.request.contextPath}/documents" method="get" class="search-box">
+                <input type="hidden" name="action" value="search">
+                <input type="text" name="titre" placeholder="Rechercher un document par titre..." 
+                       value="<c:out value='${searchTerm}'/>">
+                <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
+                <a href="${pageContext.request.contextPath}/documents" class="btn btn-primary">
+                    Tout afficher
+                </a>
+            </form>
+            <% if (currentUser.estBibliothecaire()) { %>
+                <a href="${pageContext.request.contextPath}/documents?action=add" class="btn btn-primary">
+                    ➕ Nouveau document
+                </a>
+            <% } %>
         </div>
-
-        <form action="${pageContext.request.contextPath}/documents" method="get" class="search-box">
-            <input type="hidden" name="action" value="search">
-            <input type="text" name="titre" placeholder="Rechercher par titre..." 
-                   value="${searchTerm}">
-            <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
-            <a href="${pageContext.request.contextPath}/documents" class="btn btn-primary">
-                Tout afficher
-            </a>
-        </form>
 
         <c:choose>
             <c:when test="${empty documents}">
                 <div class="empty-state">
                     <div style="font-size: 4em;">📭</div>
                     <h2>Aucun document trouvé</h2>
-                    <p>Commencez par ajouter votre premier document</p>
+                    <p>Aucun document ne correspond à votre recherche</p>
                 </div>
             </c:when>
             <c:otherwise>
@@ -188,49 +210,79 @@
                             <th>Type</th>
                             <th>Titre</th>
                             <th>Détails</th>
-                            <th>Actions</th>
+                            <th>Disponibilité</th>
+                            <% if (currentUser.estBibliothecaire()) { %>
+                                <th>Actions</th>
+                            <% } %>
                         </tr>
                     </thead>
                     <tbody>
                         <c:forEach items="${documents}" var="doc">
+                            <%
+                                Document doc = (Document) pageContext.getAttribute("doc");
+                            %>
                             <tr>
-                                <td>${doc.numEnreg}</td>
+                                <td><strong><%= doc.getNumEnreg() %></strong></td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${doc.class.simpleName == 'Livre'}">
-                                            <span class="badge badge-livre">📖 Livre</span>
-                                        </c:when>
-                                        <c:when test="${doc.class.simpleName == 'Revue'}">
-                                            <span class="badge badge-revue">📰 Revue</span>
-                                        </c:when>
-                                        <c:when test="${doc.class.simpleName == 'Dictionnaire'}">
-                                            <span class="badge badge-dictionnaire">📕 Dictionnaire</span>
-                                        </c:when>
-                                    </c:choose>
+                                    <%
+                                        if (doc instanceof Livre) {
+                                    %>
+                                        <span class="badge badge-livre">Livre</span>
+                                    <%
+                                        } else if (doc instanceof Revue) {
+                                    %>
+                                        <span class="badge badge-revue">Revue</span>
+                                    <%
+                                        } else {
+                                    %>
+                                        <span class="badge badge-dictionnaire">Dictionnaire</span>
+                                    <%
+                                        }
+                                    %>
                                 </td>
-                                <td><strong>${doc.titre}</strong></td>
+                                <td><strong><%= doc.getTitre() %></strong></td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${doc.class.simpleName == 'Livre'}">
-                                            Auteur: ${doc.auteur} | Pages: ${doc.nbrPages}
-                                        </c:when>
-                                        <c:when test="${doc.class.simpleName == 'Revue'}">
-                                            ${doc.mois}/${doc.annee}
-                                        </c:when>
-                                        <c:when test="${doc.class.simpleName == 'Dictionnaire'}">
-                                            Langue: ${doc.langue}
-                                        </c:when>
-                                    </c:choose>
+                                    <%
+                                        if (doc instanceof Livre) {
+                                            Livre livre = (Livre) doc;
+                                    %>
+                                        Auteur: <%= livre.getAuteur() %> | <%= livre.getNbrPages() %> pages
+                                    <%
+                                        } else if (doc instanceof Revue) {
+                                            Revue revue = (Revue) doc;
+                                    %>
+                                        <%= revue.getMois() %>/<%= revue.getAnnee() %>
+                                    <%
+                                        } else {
+                                            Dictionnaire dico = (Dictionnaire) doc;
+                                    %>
+                                        Langue: <%= dico.getLangue() %>
+                                    <%
+                                        }
+                                    %>
                                 </td>
                                 <td>
-                                    <a href="${pageContext.request.contextPath}/documents?action=edit&id=${doc.numEnreg}" 
-                                       class="btn btn-edit">✏️ Modifier</a>
-                                    <a href="${pageContext.request.contextPath}/documents?action=delete&id=${doc.numEnreg}" 
-                                       class="btn btn-danger"
-                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?')">
-                                       🗑️ Supprimer
-                                    </a>
+                                    <% if (doc.estDisponible()) { %>
+                                        <span class="badge badge-disponible">
+                                            ✓ <%= doc.getQuantiteDisponible() %>/<%= doc.getQuantiteTotale() %> dispo
+                                        </span>
+                                    <% } else { %>
+                                        <span class="badge badge-indisponible">
+                                            ✗ Non disponible
+                                        </span>
+                                    <% } %>
                                 </td>
+                                <% if (currentUser.estBibliothecaire()) { %>
+                                    <td>
+                                        <a href="${pageContext.request.contextPath}/documents?action=edit&id=<%= doc.getNumEnreg() %>" 
+                                           class="btn btn-edit">Modifier</a>
+                                        <a href="${pageContext.request.contextPath}/documents?action=delete&id=<%= doc.getNumEnreg() %>" 
+                                           class="btn btn-danger"
+                                           onclick="return confirm('Supprimer ce document ?')">
+                                           Supprimer
+                                        </a>
+                                    </td>
+                                <% } %>
                             </tr>
                         </c:forEach>
                     </tbody>

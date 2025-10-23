@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="sn.ucad.m1.sunubibliotek.Cyberboys.entities.*" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -55,6 +56,7 @@
             font-size: 1em;
             transition: all 0.3s ease;
             font-weight: 600;
+            display: inline-block;
         }
         .btn-primary {
             background: #667eea;
@@ -142,10 +144,6 @@
             padding: 60px 20px;
             color: #a0aec0;
         }
-        .empty-state i {
-            font-size: 4em;
-            margin-bottom: 20px;
-        }
     </style>
 </head>
 <body>
@@ -153,20 +151,20 @@
         <h1>📚 Sunu Bibliotek</h1>
         <div class="subtitle">Cyberboys Edition</div>
         <div class="stats">
-            Total: <strong>${count}</strong> document(s)
+            Total: <strong><c:out value="${count}"/></strong> document(s)
         </div>
 
         <div class="actions">
             <a href="${pageContext.request.contextPath}/documents?action=add" class="btn btn-primary">
-                ➕ Ajouter un document
+                Ajouter un document
             </a>
         </div>
 
         <form action="${pageContext.request.contextPath}/documents" method="get" class="search-box">
             <input type="hidden" name="action" value="search">
             <input type="text" name="titre" placeholder="Rechercher par titre..." 
-                   value="${searchTerm}">
-            <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
+                   value="<c:out value='${searchTerm}'/>">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
             <a href="${pageContext.request.contextPath}/documents" class="btn btn-primary">
                 Tout afficher
             </a>
@@ -184,51 +182,63 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>N°</th>
+                            <th>Numero</th>
                             <th>Type</th>
                             <th>Titre</th>
-                            <th>Détails</th>
+                            <th>Details</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <c:forEach items="${documents}" var="doc">
                             <tr>
-                                <td>${doc.numEnreg}</td>
+                                <td><c:out value="${doc.numEnreg}"/></td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${doc.class.simpleName == 'Livre'}">
-                                            <span class="badge badge-livre">📖 Livre</span>
-                                        </c:when>
-                                        <c:when test="${doc.class.simpleName == 'Revue'}">
-                                            <span class="badge badge-revue">📰 Revue</span>
-                                        </c:when>
-                                        <c:when test="${doc.class.simpleName == 'Dictionnaire'}">
-                                            <span class="badge badge-dictionnaire">📕 Dictionnaire</span>
-                                        </c:when>
-                                    </c:choose>
+                                    <%
+                                        Document doc = (Document) pageContext.getAttribute("doc");
+                                        if (doc instanceof Livre) {
+                                    %>
+                                        <span class="badge badge-livre">Livre</span>
+                                    <%
+                                        } else if (doc instanceof Revue) {
+                                    %>
+                                        <span class="badge badge-revue">Revue</span>
+                                    <%
+                                        } else if (doc instanceof Dictionnaire) {
+                                    %>
+                                        <span class="badge badge-dictionnaire">Dictionnaire</span>
+                                    <%
+                                        }
+                                    %>
                                 </td>
-                                <td><strong>${doc.titre}</strong></td>
+                                <td><strong><c:out value="${doc.titre}"/></strong></td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${doc.class.simpleName == 'Livre'}">
-                                            Auteur: ${doc.auteur} | Pages: ${doc.nbrPages}
-                                        </c:when>
-                                        <c:when test="${doc.class.simpleName == 'Revue'}">
-                                            ${doc.mois}/${doc.annee}
-                                        </c:when>
-                                        <c:when test="${doc.class.simpleName == 'Dictionnaire'}">
-                                            Langue: ${doc.langue}
-                                        </c:when>
-                                    </c:choose>
+                                    <%
+                                        if (doc instanceof Livre) {
+                                            Livre livre = (Livre) doc;
+                                    %>
+                                        Auteur: <%= livre.getAuteur() %> | Pages: <%= livre.getNbrPages() %>
+                                    <%
+                                        } else if (doc instanceof Revue) {
+                                            Revue revue = (Revue) doc;
+                                    %>
+                                        <%= revue.getMois() %>/<%= revue.getAnnee() %>
+                                    <%
+                                        } else if (doc instanceof Dictionnaire) {
+                                            Dictionnaire dico = (Dictionnaire) doc;
+                                    %>
+                                        Langue: <%= dico.getLangue() %>
+                                    <%
+                                        }
+                                    %>
                                 </td>
                                 <td>
                                     <a href="${pageContext.request.contextPath}/documents?action=edit&id=${doc.numEnreg}" 
-                                       class="btn btn-edit">✏️ Modifier</a>
+                                       class="btn btn-edit">Modifier</a>
                                     <a href="${pageContext.request.contextPath}/documents?action=delete&id=${doc.numEnreg}" 
                                        class="btn btn-danger"
-                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?')">
-                                       🗑️ Supprimer
+                                       onclick="return confirm('Voulez-vous vraiment supprimer ce document ?')">
+                                       Supprimer
                                     </a>
                                 </td>
                             </tr>
