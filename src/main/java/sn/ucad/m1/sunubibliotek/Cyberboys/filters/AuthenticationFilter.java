@@ -1,5 +1,7 @@
 package sn.ucad.m1.sunubibliotek.Cyberboys.filters;
 
+import sn.ucad.m1.sunubibliotek.Cyberboys.entities.Utilisateur;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
@@ -7,48 +9,57 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-/**
- * Filtre pour vérifier l'authentification sur toutes les pages protégées
- */
-@WebFilter(urlPatterns = {"/documents", "/utilisateurs", "/emprunts", "/reservations", "/dashboard", "/profil"})
-public class AuthenticationFilter implements Filter {
+@WebFilter(urlPatterns = {"/documents", "/emprunts", "/dashboard", "/utilisateurs"})
+public class AuthFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // Initialisation du filtre
+        // Initialisation si nécessaire
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        HttpSession session = req.getSession(false);
         
-        // Récupérer la session
-        HttpSession session = httpRequest.getSession(false);
+        String requestURI = req.getRequestURI();
         
         // Vérifier si l'utilisateur est connecté
-        boolean isLoggedIn = (session != null && session.getAttribute("utilisateur") != null);
-        
-        if (isLoggedIn) {
-            // L'utilisateur est connecté, continuer
-            chain.doFilter(request, response);
-        } else {
-            // L'utilisateur n'est pas connecté, rediriger vers login
-            session = httpRequest.getSession(true);
-            session.setAttribute("error", "Vous devez vous connecter pour accéder à cette page");
-            
-            // Sauvegarder l'URL demandée pour redirection après login
-            String requestedUrl = httpRequest.getRequestURI();
-            session.setAttribute("redirectAfterLogin", requestedUrl);
-            
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
+        if (session == null || session.getAttribute("utilisateur") == null) {
+            resp.sendRedirect(req.getContextPath() + "/auth");
+            return;
         }
+        
+        // Récupérer l'utilisateur
+        Utilisateur utilisateur = (Utilisateur) session.getAttribute("utilisateur");
+        
+        // Vérifier les permissions selon le rôle
+        if (requestURI.contains("/utilisateurs")) {
+            // Seuls les ADMIN peuvent gérer les utilisateurs
+            if (!utilisateur.isAdmin()) {
+                resp.sendRedirect(req.getContextPath() + "/dashboard");
+                return;
+            }
+        }
+        
+        if (requestURI.contains("/emprunts")) {
+            String action = req.getParameter("action");
+            // Les LECTEURS ne peuvent voir que leurs propres emprunts
+            if (utilisateur.isLecteur() && !"mes-emprunts".equals(action)) {
+                resp.sendRedirect(req.getContextPath() + "/emprunts?action=mes-emprunts");
+                return;
+            }
+        }
+        
+        // Continuer la chaîne de filtres
+        chain.doFilter(request, response);
     }
 
     @Override
     public void destroy() {
-        // Nettoyage
+        // Nettoyage si nécessaire
     }
 }

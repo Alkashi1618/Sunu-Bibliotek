@@ -4,6 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - Sunu Bibliotek</title>
     <style>
         * {
@@ -11,6 +12,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -20,158 +22,218 @@
             align-items: center;
             padding: 20px;
         }
+        
         .login-container {
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
-            max-width: 1000px;
+            max-width: 900px;
             width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
         }
-        .login-banner {
+        
+        .login-left {
+            flex: 1;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
             padding: 60px 40px;
+            color: white;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            text-align: center;
         }
-        .login-banner .logo {
-            font-size: 5em;
-            margin-bottom: 20px;
-        }
-        .login-banner h1 {
+        
+        .login-left h1 {
             font-size: 2.5em;
             margin-bottom: 20px;
         }
-        .login-banner p {
-            font-size: 1.1em;
+        
+        .login-left .subtitle {
+            font-size: 1.2em;
             opacity: 0.9;
+            margin-bottom: 30px;
         }
-        .login-form-container {
+        
+        .features {
+            margin-top: 40px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        .feature-item span {
+            font-size: 1.5em;
+            margin-right: 15px;
+        }
+        
+        .login-right {
+            flex: 1;
             padding: 60px 40px;
         }
-        .login-form-container h2 {
+        
+        .login-right h2 {
             color: #333;
             margin-bottom: 10px;
             font-size: 2em;
         }
-        .subtitle {
-            color: #718096;
+        
+        .login-subtitle {
+            color: #666;
             margin-bottom: 40px;
         }
+        
         .form-group {
             margin-bottom: 25px;
         }
+        
         label {
             display: block;
             margin-bottom: 8px;
             color: #333;
             font-weight: 600;
         }
+        
         input[type="email"],
         input[type="password"] {
             width: 100%;
             padding: 15px;
             border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1em;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
+        
         input:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        .btn {
+        
+        .btn-login {
             width: 100%;
             padding: 15px;
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1.1em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
-        .btn:hover {
-            background: #5568d3;
+        
+        .btn-login:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
+        
         .alert {
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 20px;
-            font-weight: 500;
+            display: flex;
+            align-items: center;
         }
+        
         .alert-error {
-            background: #fed7d7;
-            color: #742a2a;
-            border-left: 4px solid #e53e3e;
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
         }
-        .alert-info {
-            background: #bee3f8;
-            color: #2c5282;
-            border-left: 4px solid #4299e1;
+        
+        .alert-error::before {
+            content: "⚠️";
+            margin-right: 10px;
+            font-size: 1.2em;
         }
+        
         .demo-credentials {
             background: #f7fafc;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-top: 30px;
+            font-size: 0.9em;
         }
-        .demo-credentials h3 {
-            color: #2d3748;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-        }
-        .demo-credentials .credential-item {
-            background: white;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            border: 1px solid #e2e8f0;
-        }
-        .demo-credentials .credential-item strong {
+        
+        .demo-credentials h4 {
             color: #667eea;
+            margin-bottom: 15px;
         }
-        .demo-credentials .credential-item small {
-            color: #718096;
-            display: block;
-            margin-top: 5px;
+        
+        .demo-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
         }
+        
+        .demo-item:last-child {
+            border-bottom: none;
+        }
+        
+        .demo-role {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .demo-email {
+            color: #666;
+            font-family: monospace;
+        }
+        
         @media (max-width: 768px) {
             .login-container {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
-            .login-banner {
-                padding: 40px 20px;
+            
+            .login-left {
+                padding: 40px 30px;
             }
-            .login-form-container {
-                padding: 40px 20px;
+            
+            .login-right {
+                padding: 40px 30px;
             }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-banner">
-            <div class="logo">📚</div>
-            <h1>Sunu Bibliotek</h1>
-            <p>Powered by Cyberboys</p>
-            <p style="margin-top: 20px; font-size: 0.9em;">
-                Système de gestion de bibliothèque moderne
-            </p>
+        <!-- Partie gauche - Présentation -->
+        <div class="login-left">
+            <div>
+                <div style="font-size: 4em; margin-bottom: 20px;">📚</div>
+                <h1>Sunu Bibliotek</h1>
+                <p class="subtitle">Système de gestion de bibliothèque moderne</p>
+                
+                <div class="features">
+                    <div class="feature-item">
+                        <span>📖</span>
+                        <span>Gestion des documents</span>
+                    </div>
+                    <div class="feature-item">
+                        <span>🔄</span>
+                        <span>Suivi des emprunts</span>
+                    </div>
+                    <div class="feature-item">
+                        <span>👥</span>
+                        <span>Multi-utilisateurs</span>
+                    </div>
+                    <div class="feature-item">
+                        <span>📊</span>
+                        <span>Statistiques en temps réel</span>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div class="login-form-container">
+        <!-- Partie droite - Formulaire -->
+        <div class="login-right">
             <h2>Connexion</h2>
-            <p class="subtitle">Accédez à votre espace</p>
+            <p class="login-subtitle">Connectez-vous pour accéder à votre espace</p>
             
             <c:if test="${not empty error}">
                 <div class="alert alert-error">
@@ -179,43 +241,46 @@
                 </div>
             </c:if>
             
-            <c:if test="${not empty info}">
-                <div class="alert alert-info">
-                    ${info}
-                </div>
-            </c:if>
-            
-            <form action="${pageContext.request.contextPath}/login" method="post">
+            <form action="${pageContext.request.contextPath}/auth" method="post">
+                <input type="hidden" name="action" value="login">
+                
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="email">📧 Email</label>
                     <input type="email" id="email" name="email" required 
-                           placeholder="votre@email.com"
-                           value="<c:out value='${email}'/>">
+                           placeholder="votre.email@exemple.com"
+                           value="admin@bibliotek.sn">
                 </div>
                 
                 <div class="form-group">
-                    <label for="motDePasse">Mot de passe</label>
+                    <label for="motDePasse">🔒 Mot de passe</label>
                     <input type="password" id="motDePasse" name="motDePasse" required 
-                           placeholder="Votre mot de passe">
+                           placeholder="••••••••"
+                           value="admin123">
                 </div>
                 
-                <button type="submit" class="btn">Se connecter</button>
+                <button type="submit" class="btn-login">
+                    🚀 Se connecter
+                </button>
             </form>
             
+            <!-- Identifiants de démo -->
             <div class="demo-credentials">
-                <h3>Comptes de démonstration</h3>
-                <div class="credential-item">
-                    <strong>Admin:</strong> admin@bibliotek.sn
-                    <small>Mot de passe: admin123</small>
+                <h4>🔑 Comptes de démonstration</h4>
+                <div class="demo-item">
+                    <span class="demo-role">👨‍💼 Admin</span>
+                    <span class="demo-email">admin@bibliotek.sn</span>
                 </div>
-                <div class="credential-item">
-                    <strong>Bibliothécaire:</strong> biblio@bibliotek.sn
-                    <small>Mot de passe: biblio123</small>
+                <div class="demo-item">
+                    <span class="demo-role">👩‍💼 Bibliothécaire</span>
+                    <span class="demo-email">biblio@bibliotek.sn</span>
                 </div>
-                <div class="credential-item">
-                    <strong>Lecteur:</strong> lecteur@bibliotek.sn
-                    <small>Mot de passe: lecteur123</small>
+                <div class="demo-item">
+                    <span class="demo-role">👤 Lecteur</span>
+                    <span class="demo-email">lecteur@bibliotek.sn</span>
                 </div>
+                <p style="margin-top: 10px; color: #999; font-size: 0.85em;">
+                    Mot de passe pour tous : <strong>admin123</strong>
+                </p>
             </div>
         </div>
     </div>

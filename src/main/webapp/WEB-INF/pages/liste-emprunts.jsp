@@ -177,50 +177,7 @@
     </style>
 </head>
 <body>
-    <%
-        Utilisateur currentUser = (Utilisateur) session.getAttribute("utilisateur");
-    %>
-    
-    <!-- Include Menu -->
-    <jsp:include page="menu.jsp" />
-    
     <div class="container">
-        <div class="page-header">
-            <% if (currentUser.estBibliothecaire()) { %>
-                <h1>📖 Gestion des Emprunts</h1>
-            <% } else { %>
-                <h1>📖 Mes Emprunts</h1>
-            <% } %>
-            <div class="stats">
-                <% if (currentUser.estBibliothecaire()) { %>
-                    Total: <strong><c:out value="${count}"/></strong> emprunt(s) |
-                    En cours: <strong><c:out value="${countEnCours}"/></strong> |
-                    En retard: <strong style="color: #e53e3e;"><c:out value="${countEnRetard}"/></strong>
-                <% } else { %>
-                    Vous avez <strong><c:out value="${countEnCours}"/></strong> emprunt(s) en cours
-                <% } %>
-            </div>
-        </div>
-
-        <% if (currentUser.estBibliothecaire() && countEnRetard > 0) { %>
-            <div class="alert alert-warning">
-                <strong>⚠ Attention !</strong> Il y a <strong>${countEnRetard}</strong> emprunt(s) en retard.
-                <a href="${pageContext.request.contextPath}/emprunts?action=retards">
-                    Voir la liste
-                </a>
-            </div>
-        <% } %>
-
-        <div class="nav-buttons">
-            <% if (currentUser.estBibliothecaire()) { %>
-                <a href="${pageContext.request.contextPath}/emprunts?action=create" class="btn btn-primary">
-                    ➕ Nouvel Emprunt
-                </a>
-                <a href="${pageContext.request.contextPath}/emprunts?action=retards" class="btn btn-warning">
-                    Emprunts en Retard
-                </a>
-            <% } %>
-        </div>
         <h1>Gestion des Emprunts</h1>
         <div class="subtitle">Sunu Bibliotek - Cyberboys</div>
         
@@ -301,7 +258,7 @@
                                 boolean estEnRetard = emprunt.estEnRetard() && statut == StatutEmprunt.EN_COURS;
                             %>
                             <tr style="<%= estEnRetard ? "background: #fff5f5;" : "" %>">
-                                <td><strong>#<%= emprunt.getId() %></strong></td>
+                                <td><strong># <%= emprunt.getId() %></strong></td>
                                 <td>
                                     <strong><%= emprunt.getUtilisateur().getNomComplet() %></strong><br>
                                     <small style="color: #718096;"><%= emprunt.getUtilisateur().getNumeroCarte() %></small>

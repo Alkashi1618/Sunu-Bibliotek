@@ -258,7 +258,7 @@
                                 boolean estEnRetard = emprunt.estEnRetard() && statut == StatutEmprunt.EN_COURS;
                             %>
                             <tr style="<%= estEnRetard ? "background: #fff5f5;" : "" %>">
-                                <td><strong>#<%= emprunt.getId() %></strong></td>
+                                <td><strong># <%= emprunt.getId() %></strong></td>
                                 <td>
                                     <strong><%= emprunt.getUtilisateur().getNomComplet() %></strong><br>
                                     <small style="color: #718096;"><%= emprunt.getUtilisateur().getNumeroCarte() %></small>

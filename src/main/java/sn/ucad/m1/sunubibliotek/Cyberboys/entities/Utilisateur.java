@@ -1,64 +1,61 @@
 package sn.ucad.m1.sunubibliotek.Cyberboys.entities;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "utilisateurs")
-public class Utilisateur {
+public class Utilisateur implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "nom", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String nom;
 
-    @Column(name = "prenom", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String prenom;
 
-    @Column(name = "email", unique = true, nullable = false, length = 150)
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(name = "telephone", length = 20)
-    private String telephone;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type_utilisateur", nullable = false)
-    private TypeUtilisateur typeUtilisateur;
-
-    @Column(name = "numero_carte", unique = true, nullable = false, length = 20)
-    private String numeroCarte;
-
-    @Column(name = "date_inscription", nullable = false)
-    private LocalDate dateInscription;
-
-    @Column(name = "actif", nullable = false)
-    private Boolean actif = true;
-
-    @Column(name = "mot_de_passe", nullable = false)
+    @Column(nullable = false, length = 255)
     private String motDePasse;
 
+    @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private Role role = Role.LECTEUR;
+    private Role role;
 
-    @Version
-    private Long version;
+    @Column(nullable = false)
+    private Boolean actif = true;
 
-    // Constructeurs
-    public Utilisateur() {
-        this.dateInscription = LocalDate.now();
-        this.actif = true;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "date_inscription")
+    private Date dateInscription;
+
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL)
+    private List<Emprunt> emprunts;
+
+    public enum Role {
+        ADMIN,
+        BIBLIOTHECAIRE,
+        LECTEUR
     }
 
-    public Utilisateur(String nom, String prenom, String email, TypeUtilisateur typeUtilisateur) {
+    public Utilisateur() {
+        this.dateInscription = new Date();
+    }
+
+    public Utilisateur(String nom, String prenom, String email, String motDePasse, Role role) {
         this();
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
-        this.typeUtilisateur = typeUtilisateur;
+        this.motDePasse = motDePasse;
+        this.role = role;
     }
 
     // Getters et Setters
@@ -94,46 +91,6 @@ public class Utilisateur {
         this.email = email;
     }
 
-    public String getTelephone() {
-        return telephone;
-    }
-
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
-    public TypeUtilisateur getTypeUtilisateur() {
-        return typeUtilisateur;
-    }
-
-    public void setTypeUtilisateur(TypeUtilisateur typeUtilisateur) {
-        this.typeUtilisateur = typeUtilisateur;
-    }
-
-    public String getNumeroCarte() {
-        return numeroCarte;
-    }
-
-    public void setNumeroCarte(String numeroCarte) {
-        this.numeroCarte = numeroCarte;
-    }
-
-    public LocalDate getDateInscription() {
-        return dateInscription;
-    }
-
-    public void setDateInscription(LocalDate dateInscription) {
-        this.dateInscription = dateInscription;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
-    }
-
     public String getMotDePasse() {
         return motDePasse;
     }
@@ -150,34 +107,48 @@ public class Utilisateur {
         this.role = role;
     }
 
-    public Long getVersion() {
-        return version;
+    public Boolean getActif() {
+        return actif;
     }
 
-    public void setVersion(Long version) {
-        this.version = version;
+    public void setActif(Boolean actif) {
+        this.actif = actif;
     }
 
-    // Méthodes utilitaires
+    public Date getDateInscription() {
+        return dateInscription;
+    }
+
+    public void setDateInscription(Date dateInscription) {
+        this.dateInscription = dateInscription;
+    }
+
+    public List<Emprunt> getEmprunts() {
+        return emprunts;
+    }
+
+    public void setEmprunts(List<Emprunt> emprunts) {
+        this.emprunts = emprunts;
+    }
+
     public String getNomComplet() {
         return prenom + " " + nom;
     }
 
-    public boolean estActif() {
-        return actif != null && actif;
-    }
-
-    public boolean estAdmin() {
+    public boolean isAdmin() {
         return role == Role.ADMIN;
     }
 
-    public boolean estBibliothecaire() {
-        return role == Role.BIBLIOTHECAIRE || role == Role.ADMIN;
+    public boolean isBibliothecaire() {
+        return role == Role.BIBLIOTHECAIRE;
+    }
+
+    public boolean isLecteur() {
+        return role == Role.LECTEUR;
     }
 
     @Override
     public String toString() {
-        return "Utilisateur [" + numeroCarte + "] " + getNomComplet() + 
-               " (" + typeUtilisateur + ", " + role + ")";
+        return "Utilisateur [" + id + " - " + getNomComplet() + " (" + email + ") - " + role + "]";
     }
 }

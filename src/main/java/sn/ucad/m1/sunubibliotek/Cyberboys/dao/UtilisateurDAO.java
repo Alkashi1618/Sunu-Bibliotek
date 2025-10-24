@@ -38,24 +38,11 @@ public class UtilisateurDAO {
         }
     }
 
-    public List<Utilisateur> findAll() {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Utilisateur> query = em.createQuery(
-                "SELECT u FROM Utilisateur u ORDER BY u.nom, u.prenom", 
-                Utilisateur.class);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
     public Utilisateur findByEmail(String email) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Utilisateur> query = em.createQuery(
-                "SELECT u FROM Utilisateur u WHERE u.email = :email", 
-                Utilisateur.class);
+                "SELECT u FROM Utilisateur u WHERE u.email = :email", Utilisateur.class);
             query.setParameter("email", email);
             return query.getSingleResult();
         } catch (NoResultException e) {
@@ -65,16 +52,41 @@ public class UtilisateurDAO {
         }
     }
 
-    public Utilisateur findByNumeroCarte(String numeroCarte) {
+    public Utilisateur authentifier(String email, String motDePasse) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Utilisateur> query = em.createQuery(
-                "SELECT u FROM Utilisateur u WHERE u.numeroCarte = :numero", 
+                "SELECT u FROM Utilisateur u WHERE u.email = :email AND u.motDePasse = :motDePasse AND u.actif = true", 
                 Utilisateur.class);
-            query.setParameter("numero", numeroCarte);
+            query.setParameter("email", email);
+            query.setParameter("motDePasse", motDePasse);
             return query.getSingleResult();
         } catch (NoResultException e) {
             return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Utilisateur> findAll() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Utilisateur> query = em.createQuery(
+                "SELECT u FROM Utilisateur u ORDER BY u.nom, u.prenom", Utilisateur.class);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Utilisateur> findByRole(Utilisateur.Role role) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Utilisateur> query = em.createQuery(
+                "SELECT u FROM Utilisateur u WHERE u.role = :role ORDER BY u.nom, u.prenom", 
+                Utilisateur.class);
+            query.setParameter("role", role);
+            return query.getResultList();
         } finally {
             em.close();
         }
@@ -119,52 +131,26 @@ public class UtilisateurDAO {
         }
     }
 
-    public Utilisateur authenticate(String email, String motDePasse) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Utilisateur> query = em.createQuery(
-                "SELECT u FROM Utilisateur u WHERE u.email = :email AND u.motDePasse = :mdp AND u.actif = true", 
-                Utilisateur.class);
-            query.setParameter("email", email);
-            query.setParameter("mdp", motDePasse);
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    public List<Utilisateur> rechercherParNom(String nom) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Utilisateur> query = em.createQuery(
-                "SELECT u FROM Utilisateur u WHERE LOWER(u.nom) LIKE LOWER(:nom) OR LOWER(u.prenom) LIKE LOWER(:nom)", 
-                Utilisateur.class);
-            query.setParameter("nom", "%" + nom + "%");
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
     public Long count() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Long> query = em.createQuery(
-                "SELECT COUNT(u) FROM Utilisateur u", 
-                Long.class);
+                "SELECT COUNT(u) FROM Utilisateur u", Long.class);
             return query.getSingleResult();
         } finally {
             em.close();
         }
     }
 
-    public boolean emailExists(String email) {
-        return findByEmail(email) != null;
-    }
-
-    public boolean numeroCarteExists(String numeroCarte) {
-        return findByNumeroCarte(numeroCarte) != null;
+    public Long countByRole(Utilisateur.Role role) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(u) FROM Utilisateur u WHERE u.role = :role", Long.class);
+            query.setParameter("role", role);
+            return query.getSingleResult();
+        } finally {
+            em.close();
+        }
     }
 }
