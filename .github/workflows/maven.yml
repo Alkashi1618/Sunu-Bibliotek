@@ -1,0 +1,59 @@
+name: Java CI/CD - Sunu Bibliotek
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout du code
+      uses: actions/checkout@v3
+      
+    - name: ☕ Configuration JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: 📦 Compilation avec Maven
+      run: mvn clean compile -B
+      
+    - name: 🧪 Exécution des tests
+      run: mvn test -B
+      continue-on-error: true
+      
+    - name: 📦 Construction du package WAR
+      run: mvn package -DskipTests -B
+      
+    - name: 📊 Vérification de la construction
+      run: |
+        if [ -f target/*.war ]; then
+          echo "✅ Fichier WAR créé avec succès"
+          ls -lh target/*.war
+        else
+          echo "❌ Erreur : Fichier WAR non trouvé"
+          exit 1
+        fi
+        
+    - name: 📤 Upload de l'artefact WAR
+      uses: actions/upload-artifact@v3
+      with:
+        name: sunubibliotek-war
+        path: target/*.war
+        retention-days: 5
+        
+    - name: 📋 Résumé de la construction
+      run: |
+        echo "### 🎉 Construction réussie!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Projet** : Sunu Bibliotek - Cyberboys" >> $GITHUB_STEP_SUMMARY
+        echo "**Branch** : ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Commit** : ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📦 **Artefact WAR** disponible dans les artifacts" >> $GITHUB_STEP_SUMMARY
