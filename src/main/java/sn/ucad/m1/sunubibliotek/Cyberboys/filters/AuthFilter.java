@@ -9,12 +9,20 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/documents", "/emprunts", "/dashboard", "/utilisateurs"})
+@WebFilter(urlPatterns = {
+    "/documents", "/documents/*",
+    "/emprunts", "/emprunts/*",
+    "/reservations", "/reservations/*",
+    "/categories", "/categories/*",
+    "/utilisateurs", "/utilisateurs/*",
+    "/statistiques", "/statistiques/*",
+    "/dashboard"
+})
 public class AuthFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // Initialisation si nécessaire
+        // Initialisation
     }
 
     @Override
@@ -25,33 +33,12 @@ public class AuthFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpSession session = req.getSession(false);
         
-        String requestURI = req.getRequestURI();
-        
         // Vérifier si l'utilisateur est connecté
         if (session == null || session.getAttribute("utilisateur") == null) {
+            session = req.getSession(true);
+            session.setAttribute("error", "Veuillez vous connecter pour accéder à cette page");
             resp.sendRedirect(req.getContextPath() + "/auth");
             return;
-        }
-        
-        // Récupérer l'utilisateur
-        Utilisateur utilisateur = (Utilisateur) session.getAttribute("utilisateur");
-        
-        // Vérifier les permissions selon le rôle
-        if (requestURI.contains("/utilisateurs")) {
-            // Seuls les ADMIN peuvent gérer les utilisateurs
-            if (!utilisateur.isAdmin()) {
-                resp.sendRedirect(req.getContextPath() + "/dashboard");
-                return;
-            }
-        }
-        
-        if (requestURI.contains("/emprunts")) {
-            String action = req.getParameter("action");
-            // Les LECTEURS ne peuvent voir que leurs propres emprunts
-            if (utilisateur.isLecteur() && !"mes-emprunts".equals(action)) {
-                resp.sendRedirect(req.getContextPath() + "/emprunts?action=mes-emprunts");
-                return;
-            }
         }
         
         // Continuer la chaîne de filtres
@@ -60,6 +47,6 @@ public class AuthFilter implements Filter {
 
     @Override
     public void destroy() {
-        // Nettoyage si nécessaire
+        // Nettoyage
     }
 }

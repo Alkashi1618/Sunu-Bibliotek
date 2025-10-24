@@ -40,7 +40,6 @@ public class DashboardServlet extends HttpServlet {
         }
         
         try {
-            // Charger les statistiques selon le rôle
             switch (utilisateur.getRole()) {
                 case ADMIN:
                     afficherDashboardAdmin(req, resp);
@@ -68,13 +67,13 @@ public class DashboardServlet extends HttpServlet {
         Long totalDocuments = documentDAO.count();
         Long totalUtilisateurs = utilisateurDAO.count();
         Long totalEmprunts = empruntDAO.count();
-        Long empruntsEnCours = empruntDAO.countByStatut(Emprunt.Statut.EN_COURS);
-        Long empruntsEnRetard = empruntDAO.countEmpruntsEnRetard();
+        Long empruntsEnCours = empruntDAO.countEnCours();
+        Long empruntsEnRetard = empruntDAO.countEnRetard();
         
         // Statistiques par rôle
-        Long countAdmins = utilisateurDAO.countByRole(Utilisateur.Role.ADMIN);
-        Long countBibliothecaires = utilisateurDAO.countByRole(Utilisateur.Role.BIBLIOTHECAIRE);
-        Long countLecteurs = utilisateurDAO.countByRole(Utilisateur.Role.LECTEUR);
+        Long countAdmins = utilisateurDAO.countByRole(Role.ADMIN);
+        Long countBibliothecaires = utilisateurDAO.countByRole(Role.BIBLIOTHECAIRE);
+        Long countLecteurs = utilisateurDAO.countByRole(Role.LECTEUR);
         
         // Derniers emprunts
         List<Emprunt> derniersEmprunts = empruntDAO.findAll();
@@ -102,21 +101,17 @@ public class DashboardServlet extends HttpServlet {
     private void afficherDashboardBibliothecaire(HttpServletRequest req, HttpServletResponse resp) 
             throws ServletException, IOException {
         
-        // Statistiques pour bibliothécaire
         Long totalDocuments = documentDAO.count();
-        Long empruntsEnCours = empruntDAO.countByStatut(Emprunt.Statut.EN_COURS);
-        Long empruntsEnRetard = empruntDAO.countEmpruntsEnRetard();
+        Long empruntsEnCours = empruntDAO.countEnCours();
+        Long empruntsEnRetard = empruntDAO.countEnRetard();
         
-        // Emprunts récents
         List<Emprunt> empruntsRecents = empruntDAO.findEmpruntsEnCours();
         if (empruntsRecents.size() > 15) {
             empruntsRecents = empruntsRecents.subList(0, 15);
         }
         
-        // Emprunts en retard
         List<Emprunt> empruntsRetard = empruntDAO.findEmpruntsEnRetard();
         
-        // Documents récents
         List<Document> documentsRecents = documentDAO.findAll();
         if (documentsRecents.size() > 10) {
             documentsRecents = documentsRecents.subList(0, 10);
@@ -136,20 +131,16 @@ public class DashboardServlet extends HttpServlet {
                                           Utilisateur utilisateur) 
             throws ServletException, IOException {
         
-        // Emprunts du lecteur
         List<Emprunt> mesEmprunts = empruntDAO.findByUtilisateur(utilisateur.getId());
         
-        // Compter les emprunts en cours
         long empruntsEnCours = mesEmprunts.stream()
-            .filter(e -> e.getStatut() == Emprunt.Statut.EN_COURS)
+            .filter(e -> e.getStatut() == StatutEmprunt.EN_COURS)
             .count();
         
-        // Compter les emprunts en retard
         long empruntsEnRetard = mesEmprunts.stream()
-            .filter(Emprunt::isEnRetard)
+            .filter(Emprunt::estEnRetard)
             .count();
         
-        // Documents disponibles (catalogue)
         List<Document> catalogueDocuments = documentDAO.findAll();
         if (catalogueDocuments.size() > 20) {
             catalogueDocuments = catalogueDocuments.subList(0, 20);

@@ -115,6 +115,14 @@ public abstract class Document implements Serializable {
     public void setVersion(Long version) {
         this.version = version;
     }
+    
+    public Categorie getCategorie() {
+        return categorie;
+    }
+
+    public void setCategorie(Categorie categorie) {
+        this.categorie = categorie;
+    }
 
     // Méthodes métier
     public boolean estDisponible() {

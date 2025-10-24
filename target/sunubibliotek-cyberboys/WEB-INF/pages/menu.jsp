@@ -2,6 +2,10 @@
 <%@ page import="sn.ucad.m1.sunubibliotek.Cyberboys.entities.*" %>
 <%
     Utilisateur currentUser = (Utilisateur) session.getAttribute("utilisateur");
+    if (currentUser == null) {
+        response.sendRedirect(request.getContextPath() + "/auth");
+        return;
+    }
     String currentPage = request.getRequestURI();
 %>
 

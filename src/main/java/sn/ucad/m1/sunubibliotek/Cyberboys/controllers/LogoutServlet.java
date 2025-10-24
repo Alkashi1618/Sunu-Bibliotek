@@ -15,17 +15,15 @@ public class LogoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
             throws ServletException, IOException {
         
-        // Récupérer la session
         HttpSession session = req.getSession(false);
         
         if (session != null) {
-            // Détruire la session
             session.invalidate();
         }
         
-        // Rediriger vers la page de connexion avec un message
+        // CORRECTION ICI: /auth au lieu de /login
         req.getSession(true).setAttribute("info", "Vous avez été déconnecté avec succès");
-        resp.sendRedirect(req.getContextPath() + "/login");
+        resp.sendRedirect(req.getContextPath() + "/auth");
     }
 
     @Override

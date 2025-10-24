@@ -2,6 +2,7 @@ package sn.ucad.m1.sunubibliotek.Cyberboys.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "categories")
@@ -88,6 +89,17 @@ public class Categorie implements Serializable {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+    
+    @OneToMany(mappedBy = "categorie", fetch = FetchType.LAZY)
+    private List<Document> documents;
+
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
     }
 
     @Override

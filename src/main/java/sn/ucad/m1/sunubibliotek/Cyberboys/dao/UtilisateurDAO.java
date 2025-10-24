@@ -1,6 +1,7 @@
 package sn.ucad.m1.sunubibliotek.Cyberboys.dao;
 
 import sn.ucad.m1.sunubibliotek.Cyberboys.entities.Utilisateur;
+import sn.ucad.m1.sunubibliotek.Cyberboys.entities.Role;
 import sn.ucad.m1.sunubibliotek.Cyberboys.utils.JPAUtil;
 
 import javax.persistence.EntityManager;
@@ -52,7 +53,7 @@ public class UtilisateurDAO {
         }
     }
 
-    public Utilisateur authentifier(String email, String motDePasse) {
+    public Utilisateur authenticate(String email, String motDePasse) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Utilisateur> query = em.createQuery(
@@ -79,7 +80,7 @@ public class UtilisateurDAO {
         }
     }
 
-    public List<Utilisateur> findByRole(Utilisateur.Role role) {
+    public List<Utilisateur> findByRole(Role role) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Utilisateur> query = em.createQuery(
@@ -142,13 +143,51 @@ public class UtilisateurDAO {
         }
     }
 
-    public Long countByRole(Utilisateur.Role role) {
+    public Long countByRole(Role role) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Long> query = em.createQuery(
                 "SELECT COUNT(u) FROM Utilisateur u WHERE u.role = :role", Long.class);
             query.setParameter("role", role);
             return query.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    // NOUVELLES MÉTHODES AJOUTÉES
+    public boolean emailExists(String email) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(u) FROM Utilisateur u WHERE u.email = :email", Long.class);
+            query.setParameter("email", email);
+            return query.getSingleResult() > 0;
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean numeroCarteExists(String numeroCarte) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(u) FROM Utilisateur u WHERE u.numeroCarte = :numero", Long.class);
+            query.setParameter("numero", numeroCarte);
+            return query.getSingleResult() > 0;
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Utilisateur> rechercherParNom(String nom) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Utilisateur> query = em.createQuery(
+                "SELECT u FROM Utilisateur u WHERE LOWER(u.nom) LIKE LOWER(:nom) OR LOWER(u.prenom) LIKE LOWER(:nom) ORDER BY u.nom", 
+                Utilisateur.class);
+            query.setParameter("nom", "%" + nom + "%");
+            return query.getResultList();
         } finally {
             em.close();
         }

@@ -245,7 +245,7 @@
                 <input type="hidden" name="action" value="login">
                 
                 <div class="form-group">
-                    <label for="email">📧 Email</label>
+                    <label for="email"> Email</label>
                     <input type="email" id="email" name="email" required 
                            placeholder="votre.email@exemple.com"
                            value="admin@bibliotek.sn">
@@ -259,7 +259,7 @@
                 </div>
                 
                 <button type="submit" class="btn-login">
-                    🚀 Se connecter
+                     Se connecter
                 </button>
             </form>
             
@@ -267,15 +267,15 @@
             <div class="demo-credentials">
                 <h4>🔑 Comptes de démonstration</h4>
                 <div class="demo-item">
-                    <span class="demo-role">👨‍💼 Admin</span>
+                    <span class="demo-role"> Admin</span>
                     <span class="demo-email">admin@bibliotek.sn</span>
                 </div>
                 <div class="demo-item">
-                    <span class="demo-role">👩‍💼 Bibliothécaire</span>
+                    <span class="demo-role"> Bibliothécaire</span>
                     <span class="demo-email">biblio@bibliotek.sn</span>
                 </div>
                 <div class="demo-item">
-                    <span class="demo-role">👤 Lecteur</span>
+                    <span class="demo-role"> Lecteur</span>
                     <span class="demo-email">lecteur@bibliotek.sn</span>
                 </div>
                 <p style="margin-top: 10px; color: #999; font-size: 0.85em;">

@@ -1,4 +1,5 @@
 sn\ucad\m1\sunubibliotek\Cyberboys\filters\AuthorizationFilter.class
+sn\ucad\m1\sunubibliotek\Cyberboys\filters\AuthFilter.class
 sn\ucad\m1\sunubibliotek\Cyberboys\services\ReservationService.class
 sn\ucad\m1\sunubibliotek\Cyberboys\controllers\UtilisateurServlet.class
 sn\ucad\m1\sunubibliotek\Cyberboys\dao\EmpruntDAO.class
@@ -20,6 +21,7 @@ sn\ucad\m1\sunubibliotek\Cyberboys\utils\JPAUtil.class
 sn\ucad\m1\sunubibliotek\Cyberboys\controllers\CategorieServlet.class
 sn\ucad\m1\sunubibliotek\Cyberboys\controllers\DocumentServlet.class
 sn\ucad\m1\sunubibliotek\Cyberboys\utils\AppContextListener.class
+sn\ucad\m1\sunubibliotek\Cyberboys\controllers\DashboardServlet$1.class
 sn\ucad\m1\sunubibliotek\Cyberboys\controllers\StatistiqueServlet.class
 sn\ucad\m1\sunubibliotek\Cyberboys\entities\StatutReservation.class
 sn\ucad\m1\sunubibliotek\Cyberboys\controllers\ReservationServlet.class
@@ -29,7 +31,6 @@ sn\ucad\m1\sunubibliotek\Cyberboys\services\EmpruntService.class
 sn\ucad\m1\sunubibliotek\Cyberboys\entities\TypeUtilisateur.class
 sn\ucad\m1\sunubibliotek\Cyberboys\services\UtilisateurService.class
 sn\ucad\m1\sunubibliotek\Cyberboys\entities\Categorie.class
-sn\ucad\m1\sunubibliotek\Cyberboys\filters\AuthenticationFilter.class
 sn\ucad\m1\sunubibliotek\Cyberboys\dao\CategorieDAO.class
 sn\ucad\m1\sunubibliotek\Cyberboys\dao\UtilisateurDAO.class
 sn\ucad\m1\sunubibliotek\Cyberboys\controllers\LogoutServlet.class
